@@ -16,12 +16,11 @@ import (
 
 const appName = "warp-plus"
 
-var version string = ""
-
 func main() {
 	args := os.Args[1:]
 	ctx, _ := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	rootCmd := newRootCmd()
+	versionCmd(rootCmd)
 	err := rootCmd.command.Parse(
 		args,
 		ff.WithConfigFileFlag("config"),
@@ -30,7 +29,7 @@ func main() {
 
 	switch {
 	case errors.Is(err, ff.ErrHelp):
-		fmt.Fprintf(os.Stderr, "%s\n", ffhelp.Flags(rootCmd.flags))
+		fmt.Fprintf(os.Stderr, "%s\n", ffhelp.Command(rootCmd.command))
 		os.Exit(0)
 	case err != nil:
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
