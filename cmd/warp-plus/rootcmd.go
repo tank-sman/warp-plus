@@ -15,7 +15,6 @@ import (
 	p "github.com/bepass-org/warp-plus/psiphon"
 	"github.com/bepass-org/warp-plus/warp"
 	"github.com/bepass-org/warp-plus/wiresocks"
-	"github.com/carlmjohnson/versioninfo"
 	"github.com/peterbourgon/ff/v4"
 	"github.com/peterbourgon/ff/v4/ffval"
 )
@@ -42,7 +41,6 @@ type rootConfig struct {
 	wgConf   string
 	testUrl  string
 	config   string
-	version  bool
 }
 
 func newRootCmd() *rootConfig {
@@ -137,11 +135,6 @@ func newRootCmd() *rootConfig {
 		LongName:  "config",
 		Value:     ffval.NewValueDefault(&cfg.config, ""),
 	})
-	cfg.flags.AddFlag(ff.FlagConfig{
-		LongName: "version",
-		Value:    ffval.NewValueDefault(&cfg.version, false),
-		Usage:    "displays version",
-	})
 	cfg.command = &ff.Command{
 		Name:  appName,
 		Flags: cfg.flags,
@@ -151,14 +144,6 @@ func newRootCmd() *rootConfig {
 }
 
 func (c *rootConfig) exec(ctx context.Context, args []string) error {
-	if c.version {
-		if version == "" {
-			version = versioninfo.Short()
-		}
-		fmt.Fprintf(os.Stderr, "%s\n", version)
-		os.Exit(0)
-	}
-
 	l := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 
 	if c.verbose {
